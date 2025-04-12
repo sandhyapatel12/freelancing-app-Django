@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% comment %} set fixed width of main continer {% endcomment %}
+<div class=" w-[1200px]  fixed top-20 flex h-screen  mx-auto  bg-gradient-to-br from-[#1a2238] to-[#121a2e]">   
+
+    <!-- Sidebar Navigation - Fixed position -->
+    {% comment %} set sidebar fix width {% endcomment %}
+    <div class="w-72 bg-[#0c1425] text-white backdrop-blur-lg bg-opacity-90 fixed h-screen overflow-y-auto custom-scrollbar z-30">
+        <!-- Profile Summary -->
+        <div class="p-6 border-b border-gray-700/50 flex flex-col items-center relative">
+   
+            <form method="POST" action="{% url 'accounts:edit_profile' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="relative w-32 h-32">
+                    <!-- Profile Image -->
+                    <img id="profileImagePreview"
+                         src="{% if profile.profile_picture and profile.profile_picture.url %}{{ profile.profile_picture.url }}{% else %}{% static 'images/default_user.png' %}{% endif %}"
+                         alt="{{ request.user.username }}'s Profile"
+                         class="w-32 h-32 rounded-full object-cover border-2 border-gray-200 shadow-md">
+                    
+                    <!-- Edit Icon -->
+                    <div class="absolute p-2 h-6 w-6 -mt-5 bottom-1 right-1 bg-white border border-gray-300 text-gray-600 hover:bg-gray-300 transition-all duration-200 cursor-pointer shadow-sm rounded-full flex items-center justify-center">
+                        <label for="profile_picture_input" class="flex items-center justify-center w-full h-full cursor-pointer">
+                            <i class="fa-solid fa-camera text-sm"></i>
+                        </label>
+                    </div>
+                
+                    <input type="file" id="profile_picture_input" name="profile_picture" class="hidden" accept="image/*">
+                </div>
+
+                <h3 class="mt-4 font-bold text-xl">{{ user.username }}</h3>
+
+                {% if user.profile.job_title %}
+                <div class="flex items-center mt-1 bg-cyan-500/10 px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 mr-2"></span>
+                    <p class="text-sm text-cyan-300">{{ user.profile.job_title }}</p>
+                </div>
+                {% endif %}
+
+             
+        </div>
+        
+        <!-- Navigation Menu -->
+        <div class="py-4 space-y-3">
+    
+            <a href="{% url 'accounts:profile' %}" class="flex items-center px-6 py-3 hover:bg-cyan-900 hover:rounded-md hover:mx-3 hover:text-white group transition-all duration-200 ">
+                <div class="mr-3 p-1 bg-cyan-500 rounded text-white transition-all duration-200">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <span>My Profile</span>
+            </a>
+            
+            <a href="{% url 'accounts:edit_profile' %}" class="flex items-center px-6 py-3  bg-blue-900/20 text-white border-r-4 border-purple-400 group transition-all duration-200 ">
+                <div class="mr-3 p-1 bg-purple-800/30 rounded text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <span>Edit Profile</span>
+            </a>
+  
+        </div>
+
+    </div>
+    
+    <!-- Main Content Area - With proper structure for fixed header and scrollable content -->
+    {% comment %} here we not set fixed width for right side content but give flex-1 so then cover all remainig space means (w-[1200px] - w-72 = remaining space(right side)) {% endcomment %}
+    <div class="flex-1 ml-72  flex flex-col h-screen">
+        
+        <!-- Fixed Header -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 p-4 sticky top-0 z-20">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold text-gray-800 dark:text-white">Edit Profile</h1>
+                {% comment %} <button type="button" id="editBtn" class="px-4 py-2 bg-yellow-500 text-white rounded">
+                    <i class="fa-solid fa-user-pen"></i>
+                </button>  {% endcomment %}
+            </div>
+        </div>
+        
+        <!-- Scrollable Content Area with Custom Scrollbar -->
+        <div class="overflow-y-auto flex-1 bg-white dark:bg-gray-900 custom-scrollbar mb-16">
+            <div class="p-6 w-full">
+                <!-- Left Column -->
+                <div class="tab-content w-full">
+                        <!-- Personal Details Card -->
+                        <h1 class='text-white font-semibold text-xl mb-3 '>Personal Information</h1>
+                        <div class="tab-pane fade show active w-full" id="personal">
+                            <div class="bg-[#0f172a] rounded-2xl shadow-lg border border-[#334155] p-6  mb-6 w-full grid grid-cols-1 md:grid-cols-2 gap-12 ">
+                          
+                              <!-- Left Column -->
+                              <div class="space-y-10">
+
+                                <div>
+                                    <label class="block text-sm font-medium text-[#f1f5f9]">Username</label>
+                                    <input type="text" name="username" value="{{ user_form.username.value }}"
+                                      class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                </div>
+
+                             
+                                <div>
+                                  <label class="block text-sm font-medium text-[#f1f5f9]">Email</label>
+                                  <input type="email" name="email" value="{{ user_form.email.value }}"
+                                    class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                </div>
+                              </div>
+                          
+                              <!-- Right Column -->
+                              <div class="space-y-10">
+                            
+                                <div>
+                                  <label class="block text-sm font-medium text-[#f1f5f9]">Location</label>
+                                  <input type="text" name="location" value="{{ profile_form.location.value|default_if_none:'' }}"
+                                    class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                    placeholder="Enter Your Location..." />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-[#f1f5f9]">Phone</label>
+                                    <input type="phone" name="phone" value="{{ profile_form.phone.value|default_if_none:'' }}"
+                                      class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                      placeholder="Enter Your Valid Mobile Number..." />
+                                  </div>
+
+                               
+                            </div>
+                          
+                            </div>
+                        </div>
+                          
+                    
+                        <!-- Professional Tab -->
+                        <h1 class='text-white font-semibold text-xl mb-3 '>Professional Information</h1>
+                        <div class="tab-pane fade w-full" id="professional">
+                            <div class="bg-[#0f172a] rounded-2xl shadow-lg border border-[#334155] p-6  mb-6 grid grid-cols-2 gap-6 w-full ">
+                                    <div class='space-y-10'>
+                                     
+
+                                        
+                                        {% comment %} <div>
+                                            <label class="block text-sm font-medium text-[#f1f5f9]">Bio</label>
+                                            <textarea
+                                                name="bio"
+                                                id="id_bio"
+                                                class="w-full h-20 overflow-y-scroll mt-1 px-4 py-3 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                                placeholder="Write something about yourself...">
+                                                {{ profile_form.bio.value|default_if_none:'' }}
+                                            </textarea>
+                                        </div>  {% endcomment %}
+                                         
+                                        
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#f1f5f9]">Skills</label>
+                                            <input type="text" name="skills" placeholder="Enter your skills(e.g. Python, Django)" class="w-full mt-1 px-4 py-3 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                                value="{{ profile_form.skills.value|default_if_none:'' }}">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#f1f5f9]">Language</label>
+                                            <input type="text" name="language"
+                                                class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                                placeholder="e.g. English, Hindi"
+                                                value="{{ profile_form.language.value|default_if_none:'' }}" />
+                                        </div>
+                                    </div>
+                                    
+
+                                    <div class='space-y-10'>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#f1f5f9]">Job Title</label>
+                                            <input type="text" name="job_title" value="{{ profile_form.job_title.value|default_if_none:'' }}"
+                                              class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                              placeholder="Enter Your Job Title..." />
+                                          </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-[#f1f5f9]">Education</label>
+                                            <input type="text" name="education" value="{{ profile_form.education.value|default_if_none:'' }}"
+                                                class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                                placeholder="Your highest qualification" />
+                                        </div>
+                                 
+                                    </div>
+                            </div>
+                        </div>
+
+  
+                    
+                        <!-- Social Tab -->
+                        <h1 class='text-white font-semibold text-xl mb-3 '>Social Information</h1>
+
+                        <div class="tab-pane fade w-full" id="social">
+                            <div class="bg-[#0f172a] rounded-2xl shadow-lg border border-[#334155] p-6 w-full mb-6 grid grid-cols-2 gap-6">
+                        
+                                <div class='space-y-10'>
+                                    <div>
+                                        <label class="block text-sm font-medium text-[#f1f5f9]">Intro Video</label>
+                                        <input 
+                                        type="url" 
+                                        name="video"
+                                        value="{{ profile_form.video.value|default_if_none:'' }}"
+                                        class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                        placeholder="Paste your YouTube or Vimeo link here..."
+                                        />
+                                    </div>
+                                  
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-[#f1f5f9]">GitHub</label>
+                                        <input type="url" name="github_link" value="{{ profile_form.github_link.value|default_if_none:'' }}"
+                                            class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                </div>
+                                                                     
+                                </div>
+                        
+                                <div class='space-y-10'>
+                                 
+                                    <div>
+                                        <label class="block text-sm font-medium text-[#f1f5f9]">LinkedIn</label>
+                                        <input type="url" name="linkedin_link" value="{{ profile_form.linkedin_link.value|default_if_none:'' }}"
+                                        class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                    </div>
+                                
+                                    <div class="col-span-2">
+                                        <label class="block text-sm font-medium text-[#f1f5f9]">Project Link</label>
+                                        <input type="url" name="project_link" value="{{ profile_form.project_link.value|default_if_none:'' }}"
+                                        class="w-full mt-1 px-4 py-2 rounded-lg bg-[#1e293b] text-[#f1f5f9] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                                    </div>
+                                </div>
+                         
+                        
+                            </div>
+                        </div>
+                    
+                                        
+                        <!-- Submit Button -->
+                        <div class="flex justify-end mb-6">
+                            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">Save Changes</button>
+                        </div>
+                    </form>
+                                        
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add custom scrollbar styles -->
+<style>
+    /* Modern custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(56, 189, 248, 0.7);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(56, 189, 248, 1);
+    }
+    
+    /* For Firefox */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(56, 189, 248, 0.7) rgba(15, 23, 42, 0.3);
+    }
+    
+    /* For IE and Edge */
+    .custom-scrollbar {
+        -ms-overflow-style: none;
+    }
+    
+    /* Hide scrollbar for specific elements if needed */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+
+<script>
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const viewElements = document.querySelectorAll('.view-mode');
+    const editElements = document.querySelectorAll('.edit-mode');
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    editBtn.addEventListener('click', () => {
+        viewElements.forEach(el => el.classList.add('hidden'));
+        editElements.forEach(el => el.classList.remove('hidden'));
+        editBtn.classList.add('hidden');
+        saveBtn.classList.remove('hidden');
+    });
+
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove underline and active class from all buttons
+            tabButtons.forEach(b => {
+                b.classList.remove('border-cyan-500');
+                b.classList.add('border-transparent');
+            });
+
+            // Add underline to the active tab
+            btn.classList.remove('border-transparent');
+            btn.classList.add('border-cyan-500');
+
+            // Hide all tab contents
+            tabContents.forEach(tab => tab.classList.add('hidden'));
+
+            // Show content of clicked tab
+            const target = btn.getAttribute('data-tab');
+            document.getElementById(target).classList.remove('hidden');
+        });
+    });
+
+
+    function previewVideo(event) {
+        const file = event.target.files[0];
+        const videoPreview = document.getElementById("videoPreview");
+
+        if (file) {
+            const videoURL = URL.createObjectURL(file);
+            videoPreview.src = videoURL;
+            videoPreview.classList.remove("hidden");
+        }
+    }
+
+
+
+    const input = document.getElementById('profile_picture_input');
+    const preview = document.getElementById('profileImagePreview');
+
+    input.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+
+{% endblock %}

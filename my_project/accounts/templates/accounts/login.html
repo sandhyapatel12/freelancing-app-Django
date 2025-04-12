@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% comment %} required for login with socials {% endcomment %}
+{% load socialaccount %}    
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+{% if show_loader %}
+    <div id="loadingScreen" class="fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-50 animate-fade-in"
+        style="opacity: 0; visibility: hidden; transition: opacity 0.3s ease-in-out, visibility 0.3s;">
+        <!-- External Loader -->
+        <img src="/static/images/loader.gif" alt="Loading..." class="w-32 h-32 animate-pulse">
+        <p class="text-cyan-400 text-3xl font-bold mt-4">You are Successfully Logged In!</p>
+    </div>
+
+    <script>
+        // Ensure the loader is visible as soon as the page starts loading
+        document.addEventListener("DOMContentLoaded", function () {
+            let loader = document.getElementById("loadingScreen");
+            if (loader) {
+                loader.style.opacity = "1";
+                loader.style.visibility = "visible";
+            }
+        });
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+            window.location.href = "{% url 'home' %}";
+        }, 2000);
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+    </style>
+{% endif %} 
+
+<div class="h-screen flex items-center justify-center bg-black text-white">
+    <div class="max-w-4xl w-full mx-auto rounded-2xl shadow-2xl overflow-hidden grid grid-cols-2 bg-[#111] border border-gray-800">
+        
+        {# Login Form Section #}
+        <div class="p-12 flex flex-col justify-center">
+            <h2 class="text-4xl font-bold text-white mb-2">Welcome Back</h2>
+            <p class="text-gray-400 font-bold mb-6">Log in and Elevate Your Work!</p>
+            
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+
+                {% comment %} username {% endcomment %}
+                <div>
+                    <input type="username" name="username" id="username" 
+                        class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 bg-transparent placeholder-gray-400 text-white"
+                        placeholder="Username"
+                        value="{{ request.POST.username|default:'' }}"
+                        required
+                    >
+                    
+                    {% if username_error %}
+                        <p class="text-red-500 text-sm mt-1">{{ username_error }}</p>  {# Show username error message #}
+                    {% endif %}
+                </div>
+                
+                {% comment %} password {% endcomment %}
+                <div class="relative">
+                    <input 
+                        type="password" 
+                        name="password" 
+                        id="password" 
+                        class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 bg-transparent  placeholder-gray-400 text-white pr-10"
+                        placeholder="Password" 
+                        required
+                        value="{{ request.POST.password|default:'' }}"
+                    />
+                    
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 top-3 right-3 flex items-center h-fit">
+                        <img src="/static/images/eye-close.png" id="eyeIcon" class="w-6 h-6 text-gray-400 cursor-pointer">
+                    </button>
+                    
+                    {% if password_error %}
+                        <p class="text-red-500 text-sm mt-1">{{ password_error }}</p>  {# Show password error message #}
+                    {% endif %}
+                </div>
+                
+                <button type="submit" 
+                    class="w-full bg-gradient-to-r from-cyan-400 to-magenta-500 text-white py-3 rounded-lg font-bold hover:opacity-60 transition duration-300">
+                    Sign In
+                </button>
+            </form>
+
+               {% comment %} login with google  {% endcomment %}
+            <div class="mt-3 text-center ">
+                <p class="text-gray-400 mb-3">--------- or continue with ---------</p>
+                <div class="flex justify-center space-x-4  ">
+        
+                    <a href="{% provider_login_url 'google' process='login' %}" class="btn-google">
+                    <button class="flex w-[330px] items-center justify-center border border-gray-600 rounded-xl px-4 py-2 hover:bg-gray-300 hover:border-none hover:text-black">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-6 h-6 mr-2 "/>
+                        Google
+                    </button>
+                    </a>   
+        
+                </div>
+            </div>
+
+
+            
+            <div class="mt-6 text-center text-gray-400">
+                You don't have any Account? 
+                <a href="{% url 'accounts:register' %}" class="text-cyan-400 hover:text-magenta-400 transition duration-300 hover:text-gray-200 hover:font-bold">Register</a>
+            </div>
+        </div>
+
+        {# Image Section with Neon Glow #}
+        <div class="relative mx-5 my-8 flex items-center justify-center bg-cover bg-center">
+            <Image src='/static/images/login_img.jpg'  alt="main_img"  class="rounded-xl h-full "/> 
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        let passwordField = document.getElementById("password");
+        let eyeIcon = document.getElementById("eyeIcon");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.src = "/static/images/eye-open.png"; // Change to eye-open icon
+        } else {
+            passwordField.type = "password";
+            eyeIcon.src = "/static/images/eye-close.png"; // Change to eye-closed icon
+        }
+    });
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,238 @@
+<!-- Heroicons CDN -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<nav class="w-full bg-gradient-to-r from-slate-900 to-slate-800 backdrop-blur-md shadow-xl fixed top-0 z-50 border-b border-cyan-500/20">
+  <div class="max-w-7xl mx-auto px-4 lg:px-10 flex justify-between items-center h-16 w-full">
+    <!-- Left: Logo -->
+    <div class="flex items-center space-x-4">
+      <a href="{% url 'home' %}" class="flex items-center space-x-2">
+        <i data-lucide="briefcase" class="w-7 h-7 text-cyan-400"></i>
+        <span class="text-2xl font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-cyan-200">
+          Client Hub
+        </span>
+      </a>
+    </div>
+
+    <!-- Center: Navigation Links -->
+    <div class="hidden md:flex space-x-1 text-gray-300 font-medium">
+      <a href="{% url 'client_dashboard' %}" class="relative group px-4 py-2 transition-all duration-300 hover:text-cyan-300 flex items-center space-x-1">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Dashboard</span>
+        <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-cyan-300 scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+      </a>
+      <a href="/proposals" class="relative group px-4 py-2 transition-all duration-300 hover:text-cyan-300 flex items-center space-x-1">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        <span>My Proposals</span>
+        <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-cyan-300 scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+      </a>
+      <a href="/find-jobs" class="relative group px-4 py-2 transition-all duration-300 hover:text-cyan-300 flex items-center space-x-1">
+        <i data-lucide="search" class="w-4 h-4"></i>
+        <span>Find Jobs</span>
+        <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-cyan-300 scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+      </a>
+      <a href="/earnings" class="relative group px-4 py-2 transition-all duration-300 hover:text-cyan-300 flex items-center space-x-1">
+        <i data-lucide="dollar-sign" class="w-4 h-4"></i>
+        <span>Earnings</span>
+        <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-cyan-400 to-cyan-300 scale-x-0 group-hover:scale-x-100 transition-transform"></span>
+      </a>
+    </div>
+
+    <!-- Right: User Actions -->
+    <div class="flex items-center space-x-4">
+      <!-- Live Search Bar -->
+      <div class="relative hidden md:block">
+        <input type="text" placeholder="Search jobs..." 
+               class="px-4 py-2 pl-9 text-gray-300 bg-slate-800/80 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-400/50 transition-all outline-none placeholder-gray-500 w-56" />
+        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
+      </div>
+
+      <!-- Notifications -->
+      <div class="relative">
+        <button class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-gray-300 hover:text-cyan-300 transition-all relative">
+          <i data-lucide="bell" class="w-5 h-5"></i>
+          <span class="absolute -top-1 -right-1 bg-cyan-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button id="mobileMenuBtn" class="md:hidden p-1.5 text-gray-300 hover:text-cyan-300">
+        <i data-lucide="menu" class="w-6 h-6"></i>
+      </button>
+
+      <!-- Profile Section -->
+      <div class="relative group">
+        <button id="profileDropdownBtn" class="flex items-center focus:outline-none space-x-2">
+          <div class="text-right hidden sm:block">
+            <p class="text-gray-300 text-sm font-semibold">{{ request.user.username }}</p>
+            <p class="text-cyan-400 text-xs">{{ request.user.get_user_type_display }}</p>
+          </div>
+          <img src="/static/images/git.png" alt="User" class="w-9 h-9 rounded-full border-2 border-cyan-400 hover:border-cyan-300 transition-all" />
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 top-12 w-60 bg-slate-800/95 backdrop-blur-lg text-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-slate-700/50 transform origin-top-right scale-95 group-hover:scale-100">
+          <div class="p-3 border-b border-slate-700/50">
+            <p class="font-medium">{{ request.user.username }}</p>
+            <p class="text-cyan-400 text-sm">{{ request.user.email }}</p>
+          </div>
+          
+          <div class="py-1">
+            {% comment %} <a href="/accounts/profile" class="flex items-center px-4 py-2.5 hover:bg-slate-700/50 transition duration-200">
+              <i data-lucide="user" class="w-4 h-4 mr-3 text-gray-300"></i>
+              My Profile
+            </a> {% endcomment %}
+
+            <a href="/messages" class="flex items-center px-4 py-2.5 hover:bg-slate-700/50 transition duration-200">
+              <i data-lucide="message-square" class="w-4 h-4 mr-3 text-gray-300"></i>
+              Messages
+            </a>
+
+            <!-- Switch Role -->
+            <button id="toggleRole" class="flex items-center w-full text-cyan-400 font-medium text-left px-4 py-2.5 hover:bg-slate-700/50 transition duration-200">
+              <i data-lucide="repeat" class="w-4 h-4 mr-3 text-cyan-400"></i>
+              Switch to Freelancer
+            </button>
+
+            <a href="/settings" class="flex items-center px-4 py-2.5 hover:bg-slate-700/50 transition duration-200">
+              <i data-lucide="settings" class="w-4 h-4 mr-3 text-gray-300"></i>
+              Settings
+            </a>
+          </div>
+
+          <!-- Logout -->
+          <form method="POST" action="{% url 'accounts:logout' %}" class="border-t border-slate-700/50">
+            {% csrf_token %}
+            <button type="submit" class="flex items-center w-full text-left px-4 py-2.5 text-red-400 hover:bg-slate-700/50 hover:text-red-300 rounded-b-xl transition duration-200">
+              <i data-lucide="log-out" class="w-4 h-4 mr-3"></i>
+              Logout
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Navigation Menu - Hidden by default -->
+<div id="mobileMenu" class="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 transform translate-x-full transition-transform duration-300 md:hidden">
+  <div class="flex flex-col h-full">
+    <div class="flex justify-between items-center p-4 border-b border-slate-700/50">
+      <div class="flex items-center space-x-2">
+        <i data-lucide="briefcase" class="w-6 h-6 text-cyan-400"></i>
+        <span class="text-xl font-bold text-cyan-400">Freelancer Hub</span>
+      </div>
+      <button id="closeMenu" class="text-gray-400 hover:text-white">
+        <i data-lucide="x" class="w-6 h-6"></i>
+      </button>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto py-4">
+      <div class="px-4 py-2">
+        <div class="flex items-center space-x-3 mb-6">
+          <img src="/static/images/git.png" alt="User" class="w-10 h-10 rounded-full border-2 border-cyan-400" />
+          <div>
+            <p class="text-white font-medium">{{ request.user.username }}</p>
+            <p class="text-cyan-400 text-sm">{{ request.user.get_user_type_display }}</p>
+          </div>
+        </div>
+        
+        <!-- Search -->
+        <div class="relative mb-6">
+          <input type="text" placeholder="Search jobs..." 
+                 class="w-full px-4 py-2 pl-9 text-gray-300 bg-slate-800 border border-slate-700 rounded-lg focus:ring-2 focus:ring-cyan-400/50 transition-all outline-none placeholder-gray-500" />
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
+        </div>
+        
+        <!-- Mobile Navigation Links -->
+        <nav class="space-y-1">
+          <a href="/dashboard" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="/proposals" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="file-text" class="w-5 h-5"></i>
+            <span>My Proposals</span>
+          </a>
+          <a href="/find-jobs" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span>Find Jobs</span>
+          </a>
+          <a href="/earnings" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+            <span>Earnings</span>
+          </a>
+          <a href="/messages" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="message-square" class="w-5 h-5"></i>
+            <span>Messages</span>
+          </a>
+          <a href="/profile" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="user" class="w-5 h-5"></i>
+            <span>My Profile</span>
+          </a>
+          <a href="/settings" class="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-gray-300 hover:text-cyan-400">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+            <span>Settings</span>
+          </a>
+          
+          <!-- Switch Role Mobile -->
+          <button id="toggleRoleMobile" class="flex items-center space-x-3 w-full text-left px-3 py-3 rounded-lg hover:bg-slate-800 text-cyan-400">
+            <i data-lucide="repeat" class="w-5 h-5"></i>
+            <span>Switch to Client</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+    
+    <!-- Logout Mobile -->
+    <div class="p-4 border-t border-slate-700/50">
+      <form method="POST" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="flex items-center w-full space-x-3 px-3 py-3 rounded-lg hover:bg-slate-800 text-red-400">
+          <i data-lucide="log-out" class="w-5 h-5"></i>
+          <span>Logout</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Mobile menu functionality
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMenu = document.getElementById('closeMenu');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    if (mobileMenuBtn && mobileMenu && closeMenu) {
+      mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.remove('translate-x-full');
+        document.body.style.overflow = 'hidden';
+      });
+      
+      closeMenu.addEventListener('click', function() {
+        mobileMenu.classList.add('translate-x-full');
+        document.body.style.overflow = '';
+      });
+    }
+    
+    // Toggle role functionality (placeholder - implement actual functionality)
+    const toggleRole = document.getElementById('toggleRole');
+    const toggleRoleMobile = document.getElementById('toggleRoleMobile');
+    
+    function switchRole() {
+      // Replace with actual implementation
+      alert('Switching role functionality would be implemented here');
+    }
+    
+    if (toggleRole) {
+      toggleRole.addEventListener('click', switchRole);
+    }
+    
+    if (toggleRoleMobile) {
+      toggleRoleMobile.addEventListener('click', switchRole);
+    }
+  });
+</script>

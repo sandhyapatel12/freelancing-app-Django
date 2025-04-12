@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+ {% block title %}Dashboard{% endblock %} 
+ {% block content %}
+
+    <h1 class='text-white'>welcome to Dashboard {{ request.user }}</h1>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300">
+            Logout
+        </button>
+    </form>
+    
+{% endblock %}

@@ -1,0 +1,4 @@
+node_modules
+.env
+PENDING.TXT
+README.TXT

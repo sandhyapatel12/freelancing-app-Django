@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% comment %} required for login with socials {% endcomment %}
+{% load socialaccount%}    
+
+
+{% block title %}Logging in...{% endblock %}
+
+{% block content %}
+    <div class="fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-50 animate-fade-in">
+        <img src="/static/images/loader.gif" alt="Loading..." class="w-32 h-32 animate-pulse">
+        <p class="text-cyan-400 text-3xl font-bold mt-4">Logging..... Please wait</p>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            window.location.href = "{% url 'home' %}";
+        }, 2000); // Wait 2 seconds before redirecting to dashboard page
+    </script>
+{% endblock %}

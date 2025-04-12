@@ -1,0 +1,83 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}WorkWave{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script> <!-- Tailwind CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+<body class="bg-black flex flex-col items-center justify-center min-h-screen ">
+
+    
+    <!-- ✅ Dynamic Navbar -->
+    <!-- ✅ Show Navbar only if NOT on login or registration page -->
+    {% if request.resolver_match.url_name not in "login register" %}
+
+        {% if request.user.is_authenticated %}
+            {% if request.user.user_type == "freelancer" %}
+                {% include "freelancer_nav.html" %}
+            {% else %}
+                {% include "client_nav.html" %}
+            {% endif %}
+        {% else %}
+            {% include "freelancer_nav.html" %} {# Default navbar for new users #}
+        {% endif %}
+
+    {% endif %}   
+    
+    
+
+ 
+
+   
+    <!-- ✅ Main Content -->
+    <main class="flex  items-center justify-center">
+        {% block content %}
+        <!-- Page-specific content will go here -->
+        <h1 class="text-4xl font-bold">Welcome to the Freelancing Platform</h1>
+        {% endblock %}
+    </main>
+
+
+
+
+
+    <!-- ✅ Footer -->
+    <!-- ✅ Show footer only if NOT on login or registration page -->
+    {% comment %} {% if request.resolver_match.url_name not in "login register" %}
+        <footer class="text-center py-4 bg-gray-900">
+            <p>&copy; 2025 Freelancing Platform. All rights reserved.</p>
+        </footer>
+    {% endif %} {% endcomment %}
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let toggleRoleBtn = document.getElementById("toggleRole");
+            
+            if (toggleRoleBtn) {
+                toggleRoleBtn.addEventListener("click", function () {
+                    fetch("{% url 'accounts:switch_role' %}", {  // Ensure 'accounts:switch_role' is registered
+                        method: "POST",
+                        headers: { 
+                            "X-CSRFToken": "{{ csrf_token }}",
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === "success") {
+                            location.reload(); // Reload the page to reflect the role change
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+        
+</body>
+</html>
